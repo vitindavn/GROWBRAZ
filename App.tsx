@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { 
   HomeIcon, 
@@ -12,29 +12,40 @@ import GrowSpaces from './views/GrowSpaces';
 import PlantDetail from './views/PlantDetail';
 import { GrowSpace, Plant, Genetics, GrowStage } from './types';
 
-// Dados Iniciais (Mock)
-const INITIAL_SPACES: GrowSpace[] = [
-  { id: '1', name: 'Grow Alpha', dimensions: '60x60x160', lightType: 'LED Full Spectrum', lightPower: 240 },
-  { id: '2', name: 'Sala de Floração', dimensions: '120x120x200', lightType: 'HPS', lightPower: 600 }
-];
-
-const INITIAL_PLANTS: Plant[] = [
-  {
-    id: 'p1',
-    growSpaceId: '1',
-    name: 'Glookies #1',
-    strain: 'Glookies',
-    genetics: Genetics.PHOTO,
-    seedBank: 'Barney\'s Farm',
-    startDate: Date.now() - (30 * 24 * 60 * 60 * 1000),
-    currentStage: GrowStage.VEGETATIVE,
-    logs: []
-  }
-];
-
 const App: React.FC = () => {
-  const [spaces, setSpaces] = useState<GrowSpace[]>(INITIAL_SPACES);
-  const [plants, setPlants] = useState<Plant[]>(INITIAL_PLANTS);
+  // Carregar dados iniciais do localStorage ou usar mock se vazio
+  const [spaces, setSpaces] = useState<GrowSpace[]>(() => {
+    const saved = localStorage.getItem('gb_spaces');
+    return saved ? JSON.parse(saved) : [
+      { id: '1', name: 'Grow Alpha', dimensions: '60x60x160', lightType: 'LED Full Spectrum', lightPower: 240 }
+    ];
+  });
+
+  const [plants, setPlants] = useState<Plant[]>(() => {
+    const saved = localStorage.getItem('gb_plants');
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 'p1',
+        growSpaceId: '1',
+        name: 'Glookies #1',
+        strain: 'Glookies',
+        genetics: Genetics.PHOTO,
+        seedBank: 'Barney\'s Farm',
+        startDate: Date.now() - (30 * 24 * 60 * 60 * 1000),
+        currentStage: GrowStage.VEGETATIVE,
+        logs: []
+      }
+    ];
+  });
+
+  // Persistir sempre que houver mudança
+  useEffect(() => {
+    localStorage.setItem('gb_spaces', JSON.stringify(spaces));
+  }, [spaces]);
+
+  useEffect(() => {
+    localStorage.setItem('gb_plants', JSON.stringify(plants));
+  }, [plants]);
 
   return (
     <HashRouter>
@@ -46,17 +57,17 @@ const App: React.FC = () => {
             </div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">GrowBraZ</h1>
           </div>
-          <button className="p-2 bg-slate-800 rounded-full text-slate-400">
+          <button className="p-2 bg-slate-800 rounded-full text-slate-400 hover:text-emerald-400 transition-colors">
             <Cog6ToothIcon className="w-6 h-6" />
           </button>
         </header>
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
           <Routes>
-            <Route path="/" element={<Dashboard plants={plants} spaces={spaces} />} />
+            <Route path="/" element={<Dashboard plants={plants} setPlants={setPlants} spaces={spaces} />} />
             <Route path="/grows" element={<GrowSpaces spaces={spaces} setSpaces={setSpaces} />} />
             <Route path="/plant/:id" element={<PlantDetail plants={plants} setPlants={setPlants} spaces={spaces} />} />
-            <Route path="/gallery" element={<div className="p-10 text-center text-slate-500">Galeria em breve</div>} />
+            <Route path="/gallery" element={<div className="p-10 text-center text-slate-500">Galeria Visual em Breve</div>} />
           </Routes>
         </main>
 
@@ -64,7 +75,7 @@ const App: React.FC = () => {
           <NavButton to="/" icon={<HomeIcon className="w-6 h-6" />} label="Início" />
           <NavButton to="/grows" icon={<ChartBarIcon className="w-6 h-6" />} label="Espaços" />
           <NavButton to="/gallery" icon={<PhotoIcon className="w-6 h-6" />} label="Galeria" />
-          <button className="flex flex-col items-center space-y-1 text-slate-500 opacity-50 cursor-not-allowed">
+          <button className="flex flex-col items-center space-y-1 text-slate-600 cursor-not-allowed">
             <Cog6ToothIcon className="w-6 h-6" />
             <span className="text-[10px] font-medium uppercase tracking-wider">Ajustes</span>
           </button>
@@ -75,7 +86,7 @@ const App: React.FC = () => {
 };
 
 const NavButton: React.FC<{ to: string, icon: React.ReactNode, label: string }> = ({ to, icon, label }) => (
-  <NavLink to={to} className={({ isActive }) => `flex flex-col items-center space-y-1 transition-colors ${isActive ? 'text-emerald-400' : 'text-slate-500 hover:text-slate-300'}`}>
+  <NavLink to={to} className={({ isActive }) => `flex flex-col items-center space-y-1 transition-all ${isActive ? 'text-emerald-400 scale-110' : 'text-slate-500 hover:text-slate-300'}`}>
     {icon}
     <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
   </NavLink>
