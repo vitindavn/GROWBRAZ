@@ -15,7 +15,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
   },
-  "include": ["index.tsx", "App.tsx", "types.ts", "views/**/*", "services/**/*"]
+  "include": [
+    "index.tsx", 
+    "App.tsx", 
+    "types.ts", 
+    "views/Dashboard.tsx", 
+    "views/GrowSpaces.tsx", 
+    "views/PlantDetail.tsx"
+  ],
+  "exclude": ["node_modules", "services/geminiService.ts", "views/AIAssistant.tsx"]
 }
