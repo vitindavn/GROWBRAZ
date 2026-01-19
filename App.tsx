@@ -1,19 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { 
   HomeIcon, 
-  BeakerIcon, 
-  PlusIcon, 
   PhotoIcon, 
   Cog6ToothIcon,
-  ChartBarIcon,
-  ChatBubbleLeftRightIcon
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import Dashboard from './views/Dashboard';
 import GrowSpaces from './views/GrowSpaces';
 import PlantDetail from './views/PlantDetail';
-import AIAssistant from './views/AIAssistant';
 import { GrowSpace, Plant, Genetics, GrowStage } from './types';
 
 // Dados Iniciais (Mock)
@@ -60,15 +56,18 @@ const App: React.FC = () => {
             <Route path="/" element={<Dashboard plants={plants} spaces={spaces} />} />
             <Route path="/grows" element={<GrowSpaces spaces={spaces} setSpaces={setSpaces} />} />
             <Route path="/plant/:id" element={<PlantDetail plants={plants} setPlants={setPlants} spaces={spaces} />} />
-            <Route path="/ai" element={<AIAssistant plants={plants} />} />
+            <Route path="/gallery" element={<div className="p-10 text-center text-slate-500">Galeria em breve</div>} />
           </Routes>
         </main>
 
         <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-6 py-3 flex justify-between items-center z-40 safe-bottom">
           <NavButton to="/" icon={<HomeIcon className="w-6 h-6" />} label="Início" />
           <NavButton to="/grows" icon={<ChartBarIcon className="w-6 h-6" />} label="Espaços" />
-          <NavButton to="/ai" icon={<ChatBubbleLeftRightIcon className="w-6 h-6" />} label="IA Pro" />
           <NavButton to="/gallery" icon={<PhotoIcon className="w-6 h-6" />} label="Galeria" />
+          <button className="flex flex-col items-center space-y-1 text-slate-500 opacity-50 cursor-not-allowed">
+            <Cog6ToothIcon className="w-6 h-6" />
+            <span className="text-[10px] font-medium uppercase tracking-wider">Ajustes</span>
+          </button>
         </nav>
       </div>
     </HashRouter>
