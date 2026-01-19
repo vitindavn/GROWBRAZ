@@ -42,6 +42,28 @@ const Dashboard: React.FC<DashboardProps> = ({ plants, setPlants, spaces }) => {
     setNewPlant({ name: '', strain: '', genetics: Genetics.PHOTO, seedBank: '', growSpaceId: spaces[0]?.id || '' });
   };
 
+  const getStageProgress = (stage: GrowStage) => {
+    switch (stage) {
+      case GrowStage.GERMINATION: return 'w-[10%] bg-yellow-400';
+      case GrowStage.SEEDLING: return 'w-[25%] bg-lime-400';
+      case GrowStage.VEGETATIVE: return 'w-[50%] bg-emerald-500';
+      case GrowStage.FLOWERING: return 'w-[85%] bg-pink-400';
+      case GrowStage.HARVESTED: return 'w-[100%] bg-amber-600';
+      default: return 'w-0';
+    }
+  };
+
+  const translateStage = (stage: GrowStage) => {
+    const stages: Record<GrowStage, string> = {
+      [GrowStage.GERMINATION]: 'Germinação',
+      [GrowStage.SEEDLING]: 'Plântula',
+      [GrowStage.VEGETATIVE]: 'Vegetativo',
+      [GrowStage.FLOWERING]: 'Floração',
+      [GrowStage.HARVESTED]: 'Colhida',
+    };
+    return stages[stage];
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <section>
@@ -121,15 +143,12 @@ const Dashboard: React.FC<DashboardProps> = ({ plants, setPlants, spaces }) => {
                   <div className="flex justify-between items-start">
                     <h4 className="font-bold truncate group-hover:text-emerald-400">{plant.name}</h4>
                     <span className="text-[10px] px-2 py-0.5 bg-slate-700 rounded-full font-semibold uppercase text-slate-400">
-                      {plant.currentStage === GrowStage.VEGETATIVE ? 'Vegetativo' : 
-                       plant.currentStage === GrowStage.FLOWERING ? 'Floração' : 
-                       plant.currentStage === GrowStage.GERMINATION ? 'Germinação' :
-                       plant.currentStage === GrowStage.SEEDLING ? 'Plântula' : 'Colhida'}
+                      {translateStage(plant.currentStage)}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 truncate">{plant.strain}</p>
                   <div className="mt-2 w-full bg-slate-700/50 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full w-1/3"></div>
+                    <div className={`h-full transition-all duration-1000 ${getStageProgress(plant.currentStage)}`}></div>
                   </div>
                 </div>
               </div>
